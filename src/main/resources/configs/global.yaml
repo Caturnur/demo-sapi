@@ -1,0 +1,9 @@
+api:
+  name: "demo-sapi"
+  
+#Log Categories
+log:
+  category:
+    info: "com.mulesoft.app.demo-sapi.info"
+    debug: "com.mulesoft.app.demo-sapi.debug"
+    error: "com.mulesoft.app.demo-sapi.error"

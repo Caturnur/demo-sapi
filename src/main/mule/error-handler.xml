@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="apikit-error-handler" doc:id="62eaa577-c66a-4a46-86f6-3571a9843358" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="03dc6478-8055-4353-b1e3-ee45b78357c8" type="APIKIT:BAD_REQUEST" >
+			<ee:transform doc:name="Bad Request" doc:id="ebc340ac-07a3-476c-ac24-1c825f6e5c5b" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    transactionId   : vars.transactionId,
+    apiName         : p("api.name"),
+    hasError        : true,
+    statusCode      : 400,
+    errorType       : error.errorType.asString default "",
+    errorDescription: if (vars.error.error_description == null) error.detailedDescription
+    				  else vars.error.error_description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate1" doc:id="d6149f8c-82f2-40e8-b127-ccb5ec11f759" type="APIKIT:NOT_FOUND" >
+			<ee:transform doc:name="Not Found" doc:id="32a80bb6-555e-476a-b635-d53cc5605b1e" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    transactionId   : vars.transactionId,
+    apiName         : p("api.name"),
+    hasError        : true,
+    statusCode      : 404,
+    errorType       : error.errorType.asString default "",
+    errorDescription: if (vars.error.error_description == null) error.detailedDescription
+    				  else vars.error.error_description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate2" doc:id="a1f4065a-60b4-4bae-be3a-f54d4729306d" type="APIKIT:METHOD_NOT_ALLOWED" >
+			<ee:transform doc:name="Method Not Allowed" doc:id="8c1a7573-de59-4ba3-ac0d-ab85d17a63a4" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    transactionId   : vars.transactionId,
+    apiName         : p("api.name"),
+    hasError        : true,
+    statusCode      : 405,
+    errorType       : error.errorType.asString default "",
+    errorDescription: if (vars.error.error_description == null) error.detailedDescription
+    				  else vars.error.error_description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[405]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate3" doc:id="7e2f9e2c-a03d-4b26-b35f-a77e33d6c491" type="APIKIT:NOT_ACCEPTABLE" >
+			<ee:transform doc:name="Not Acceptable" doc:id="071b2b9b-ced9-47b1-b06d-339a0df5e4d9" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    transactionId   : vars.transactionId,
+    apiName         : p("api.name"),
+    hasError        : true,
+    statusCode      : 406,
+    errorType       : error.errorType.asString default "",
+    errorDescription: if (vars.error.error_description == null) error.detailedDescription
+    				  else vars.error.error_description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[406]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate4" doc:id="21fc5246-b29a-498f-b8d2-940af6d80b05" type="APIKIT:UNSUPPORTED_MEDIA_TYPE" >
+			<ee:transform doc:name="Unsupported Media Type" doc:id="951e25b7-5df7-4901-b33b-daad2694f30e" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    transactionId   : vars.transactionId,
+    apiName         : p("api.name"),
+    hasError        : true,
+    statusCode      : 415,
+    errorType       : error.errorType.asString default "",
+    errorDescription: if (vars.error.error_description == null) error.detailedDescription
+    				  else vars.error.error_description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[415]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate5" doc:id="e2cb5a0d-e8b9-4137-a533-4b431576839c" type="APIKIT:NOT_IMPLEMENTED" >
+			<ee:transform doc:name="Not Implemented" doc:id="2554d04e-8817-4b5d-9191-5f2e58d06f60" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    transactionId   : vars.transactionId,
+    apiName         : p("api.name"),
+    hasError        : true,
+    statusCode      : 501,
+    errorType       : error.errorType.asString default "",
+    errorDescription: if (vars.error.error_description == null) error.detailedDescription
+    				  else vars.error.error_description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+	<error-handler name="database-error-handler" doc:id="142f392c-b207-4eeb-9d6b-3ff58966ba9f" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate (retry-able error)" doc:id="5d53ecc3-03f5-46a5-b31e-e0637ad55ef4" doc:description="Will be retried until-successful" type="DB:CONNECTIVITY" >
+			<ee:transform doc:name="Set error" doc:id="de53704f-2441-4f5f-93d7-dc80a6b51269" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/json
+---
+error.muleMessage.typedAttributes.statusCode
+default p("onError.connectivityError.code")]]></ee:set-variable>
+					<ee:set-variable variableName="appError" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	transactionId   : vars.transactionId,
+	apiName         : vars.apiName,
+	hasError        : p("onError.hasError")
+	                  as Boolean,
+	statusCode      : error.muleMessage.typedAttributes.statusCode
+	                  default p("onError.connectivityError.code")
+	                  as Number,
+    errorType       : error.errorType.asString
+                      default (p("onError.errorType") ++ ":" ++ (
+                      	error.errorType.identifier
+                      	default p("onError.connectivityError.type")
+                      )),
+    errorDescription: error.cause.localizedMessage
+	                  default p("onError.connectivityError.desc")
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="ERROR" doc:name="Log error" doc:id="c96b986e-ffe5-4e76-80e4-ebd5d5570f9b" message="TransactionId:  #[vars.appError.transactionId] | Error Type: #[vars.appError.errorType] | Error Description: #[vars.appError.errorDescription]" category="${log.category.error}" />
+		</on-error-propagate>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue (useless-to-retry error)" doc:id="79ce5028-bc2f-4855-a07f-0a7f5a0e307c" type="DB:BAD_SQL_SYNTAX, DB:QUERY_EXECUTION" >
+			<ee:transform doc:name="Set error" doc:id="52c9a252-e6d4-4355-9500-5653c2fdb7b6" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/json
+---
+error.muleMessage.typedAttributes.statusCode
+default p("onError.badRequest.code")]]></ee:set-variable>
+					<ee:set-variable variableName="appError" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	transactionId   : vars.transactionId,
+	apiName         : vars.apiName,
+	hasError        : p("onError.hasError")
+	                  as Boolean,
+	statusCode      : error.muleMessage.typedAttributes.statusCode
+	                  default p("onError.badRequest.code")
+	                  as Number,
+    errorType       : error.errorType.asString
+                      default (p("onError.errorType") ++ ":" ++ (
+                      	error.errorType.identifier
+                      	default p("onError.badRequest.type")
+                      )),
+    errorDescription: error.cause.localizedMessage
+	                  default p("onError.badRequest.desc")
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="ERROR" doc:name="Log error" doc:id="a4d064fa-3f41-471d-bbc6-579d62a34768" message="TransactionId:  #[vars.appError.transactionId] | Error Type: #[vars.appError.errorType] | Error Description: #[vars.appError.errorDescription]" category="${log.category.error}" />
+		</on-error-continue>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue (unexpected error)" doc:id="299d6ac0-6c31-4f34-8e85-005153916b4a" type="ANY" >
+			<ee:transform doc:name="Set error" doc:id="b3b3eb33-7701-4fdb-b1b6-f8d9e44c6c37" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="appError" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	transactionId   : vars.transactionId,
+	apiName         : vars.apiName,
+	hasError        : p("onError.hasError")
+	                  as Boolean,
+	statusCode      : if ("BAD_REQUEST" == error.errors[0].errorType.identifier)
+	                       p("onError.badRequest.code")
+	                       as Number
+	                  else error.muleMessage.typedAttributes.statusCode
+	                       default p("onError.unexpectedError.code")
+	                       as Number,
+    errorType       : error.errorType.asString
+                      default (p("onError.errorType") ++ ":" ++ (
+                      	error.errorType.identifier
+                      	default p("onError.unexpectedError.type")
+                      )),
+    errorDescription: error.cause.localizedMessage
+	                  default p("onError.unexpectedError.desc")
+}]]></ee:set-variable>
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/json
+---
+if ("BAD_REQUEST" == error.errors[0].errorType.identifier)
+     p("onError.badRequest.code")
+     as Number
+else error.muleMessage.typedAttributes.statusCode
+     default p("onError.unexpectedError.code")
+     as Number]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="ERROR" doc:name="Log error" doc:id="36359cf3-43fe-4838-9e69-26f716838e82" message="TransactionId:  #[vars.appError.transactionId] | Error Type: #[vars.appError.errorType] | Error Description: #[vars.appError.errorDescription]" category="${log.category.error}" />
+		</on-error-continue>
+	</error-handler>
+	<error-handler name="global-error-handler" doc:id="3273b155-094d-4ac2-9647-65cfa0edfc48" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bd6f54cc-91bb-4254-aaaf-9d5f57d5db05" type="ANY" >
+			<ee:transform doc:name="Set payload" doc:id="6bcfbdfa-407b-4731-a189-91b3909b3610" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var errorType = if  (vars.appError == null)
+                     error.errorType.asString
+                     default (
+                     	p("onError.errorType") ++ ":" ++ (
+                     		error.errorType.identifier
+                     		default p("onError.unexpectedError.type")
+                     	)
+                     )
+                else vars.appError.errorType
+                     default (
+                     	p("onError.errorType") ++ ":" ++ (
+                     		error.errorType.identifier
+                     		default p("onError.unexpectedError.type")
+                     	)
+                     )
+
+---
+{
+	transactionId   : if(vars.appError != null)
+	                      vars.appError.transactionId default vars.transactionId
+	                  else vars.transactionId,
+	
+	apiName         : if(vars.appError != null)
+	                      vars.appError.apiName default vars.apiName
+	                  else vars.apiName,
+	
+	hasError        : if(vars.appError != null)
+	                      vars.appError.hasError default
+	                       p("onError.hasError") as Boolean
+	                  else p("onError.hasError") as Boolean,
+	
+	statusCode      : if  ("DB:BAD_SQL_SYNTAX"   == errorType or
+		                   "DB:QUERY_EXPRESSION" == errorType )
+	                       p("onError.badRequest.code")
+	                       as Number
+	                  else if(vars.appError == null)
+	                       error.muleMessage.typedAttributes.statusCode
+	                       default p("onError.unexpectedError.code")
+	                       as Number
+	                  else vars.appError.statusCode
+	                       default p("onError.unexpectedError.code")
+	                       as Number,
+    
+    errorType       : errorType,
+	
+	errorDescription: vars.appError.errorDescription
+	                  default error.cause.localizedMessage
+	                  default p("onError.unexpectedError.desc")
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<set-variable value="#[payload.statusCode]" doc:name="httpStatus" doc:id="2241e52f-2b06-4148-8f73-4f16b5daff80" variableName="httpStatus" />
+		</on-error-propagate>
+	</error-handler>
+</mule>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="select-account-sysflow" doc:id="356e1ef5-80c8-4803-8c82-4cc1267ade78">
+		<ee:transform doc:name="SELECT Account BY vars.inputParams" doc:id="1c466b14-3797-486c-a8b6-cee0e307b8d7">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+"SELECT * FROM account" ++ vars.requestparams]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="inputParams"><![CDATA[%dw 2.0
+output application/java
+---
+{
+	(
+	ID : vars.params.ID
+	) if (!isEmpty(vars.params.ID)),
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="try-select-until-successful INTO vars.result" doc:id="8d559b35-fc13-4e82-981a-4fd3e8b9682b" name="try-query-until-successful" />
+		<ee:transform doc:name="SET vars.Account FROM vars.result" doc:id="ccd0a8fa-2f95-4dc0-9a69-032679131fa8">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="account" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.result map {
+  //account:
+    id    					: ($.AccountID       	default "") as String ++ "",
+    Name  					: ($.Name     			default "") as String ++ "",
+    Email  					: ($.Email     			default "") as String ++ "",
+    Gender  				: ($.Gender     		default "") as String ++ "",
+    Phone  					: ($.Phone     			default "") as String ++ "",
+    Address  				: ($.Addres     		default "") as String ++ ""
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="count-account-sysflow" doc:id="a9e51397-bdad-4605-8d20-ef63b5f2d213">
+		<ee:transform doc:name="COUNT Account BY vars.inputParams" doc:id="b08c32ea-ce9b-499a-b68c-10f409c1c1a9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+"SELECT COUNT(*) as Count from account" ++ vars.requestparams]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="inputParams" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	(
+	ID : vars.params.ID
+	) if (!isEmpty(vars.params.ID)),
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="try-count-until-successful INTO vars.result" doc:id="a9597340-125e-46e7-8818-0aa1718b9084" name="try-query-until-successful" />
+		<ee:transform doc:name="SET vars.count FROM vars.result" doc:id="0dd39431-6b3d-4fc4-82ca-5de072ca3ad4">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="count" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.result map {
+	count: $.Count
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

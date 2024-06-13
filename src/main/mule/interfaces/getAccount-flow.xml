@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<sub-flow name="get-account" doc:id="07944bb1-d8ac-4e3c-aac2-7d3dd41ae098" >
+		<logger level="INFO" doc:name="Start" doc:id="e97d8b86-a211-441e-856f-4059fc3f5792" message="TransactionId:  #[vars.transactionId] | Start of #[flow.name]" category="${log.category.info}" />
+		<ee:transform doc:name="Set vars.db" doc:id="3d633a0a-4d75-418e-821d-aec7bc0aece5" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="db" ><![CDATA[%dw 2.0
+output application/java
+---
+// From: "flow-reference-name"
+{
+	selectFrom: "select-account-sysflow",
+	countFrom : "count-account-sysflow"
+}]]></ee:set-variable>
+				<ee:set-variable variableName="requestparams" ><![CDATA[%dw 2.0
+output application/java
+---
+(if (!isEmpty(vars.params.ID)) "WHERE AccountID = " ++ vars.params.ID else "")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="select-and-count-account" doc:id="570bbd42-87aa-4d66-8cc9-47b2fd32f8a7" name="select-and-count-common-flow" />
+		<validation:is-not-null doc:id="5ee3ddcc-f337-46ff-99fa-6819a6850483" value="#[vars.account]" message="Failed to get account from database." doc:name="IF has account THEN continue" />
+		<ee:transform doc:name="Set payload" doc:id="db7ea847-2986-45e3-9d3d-cdbf3814da81" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	account 			: vars.account,
+	totalItem           : vars.stats.itemCount,
+	remainingPage       : vars.stats.pagesLeft,
+	totalPage           : vars.stats.pageCount,
+	status              : vars.stats.status
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End" doc:id="b0f0d377-e865-4e37-9523-ad79bb806971" message="TransactionId:  #[vars.transactionId] | End of : #[flow.name]" category="${log.category.info}" />
+	</sub-flow>
+</mule>

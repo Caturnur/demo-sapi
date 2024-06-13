@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="select-and-count-common-flow" doc:id="056c2f3a-0b20-4e3e-b34a-267b3ef3358d" >
+		<flow-ref doc:name="select-from-subflow" doc:id="498a9702-e172-48d9-b388-2080e876ec20" name="#[vars.db.selectFrom]" />
+		<validation:is-not-null doc:name="IF has result THEN continue" doc:id="917a44c5-709c-466d-9c0f-57d6de98962d" value="#[vars.result]" message="Failed to get RESULT from database."/>
+		<flow-ref doc:name="count-from-subflow" doc:id="3a249fec-3ca8-4617-9c2b-52d1ede6ed4d" name="#[vars.db.countFrom]" />
+		<validation:is-not-null doc:id="c805581c-1b68-466b-abb6-dbc86843e6d4" value="#[vars.count]" message="Failed to get COUNT from database." doc:name="IF has count THEN continue" />
+		<ee:transform doc:name="SET vars.stats" doc:id="8299765c-d2be-4f78-8a46-992c0fd93ed5" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="stats" ><![CDATA[%dw 2.0
+output application/java
+
+// inputParams
+var limit  = vars.params.limit  default 0
+var offset = vars.params.offset default 0
+
+// totalPage
+var itemCount = vars.count[0].count default 0
+var pageCount = if(limit < 1) 0
+                else ceil(itemCount / limit)
+
+// remainingPage
+var skippedItems = offset
+var itemsLeft = itemCount - skippedItems - limit
+var pagesLeft = if(limit < 1) 0
+                else ceil((if(itemsLeft < 0) 0 else itemsLeft) / limit)
+
+---
+{
+	itemCount: itemCount,
+	pagesLeft: pagesLeft,
+	pageCount: pageCount,
+	status   : "200 OK"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

@@ -1,0 +1,44 @@
+api:
+  id: "19026206"
+  env: "local"
+
+http:
+  host: "0.0.0.0"
+  port: "8081"
+  timeout: "30000"
+  retry:
+    count: "2"
+    interval: "100"
+    blocking: "true"
+  base:
+    path: "/api/v1"
+  path: "/*"
+  console:
+    path: "/console/*"
+
+db:
+  host: "localhost"
+  port: "3306"
+  user: "root"
+  password: "![RWPtNyf09EochN87Ur6NyQ==]"
+  name: "retail"
+  retry:
+    count: "2"
+    interval: "100"
+    blocking: "true"
+
+onError:
+  errorType: "DB"
+  hasError: "true"
+  badRequest:
+    type: "BAD_QUERY_EXPRESSION"
+    desc: "Bad request."
+    code: "400"
+  connectivityError:
+    type: "CONNECTIVITY"
+    desc: "Connectivity error."
+    code: "500"
+  unexpectedError:
+    type: "UNEXPECTED_ERROR"
+    desc: "An unexpected error has occurred."
+    code: "500"

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<sub-flow name="try-query-until-successful" doc:id="48efb153-4c1e-4b7f-8436-cbb17a08409d" >
+		<until-successful maxRetries="${db.retry.count}" doc:name="Until Successful" doc:id="13defe55-81b6-4a48-a96f-7ef81ca04e1d" millisBetweenRetries="${db.retry.interval}" >
+			<try doc:name="Try" doc:id="351b7062-0fa9-4f05-9e11-bd64319dba72" >
+				<db:select doc:name="into vars.result from payload by vars.inputParams" doc:id="34d4dd27-6f78-4696-bdd1-7e357ae99bdf" config-ref="Database_Config" target="result" >
+					<db:sql ><![CDATA[#[payload]]]></db:sql>
+					<db:input-parameters ><![CDATA[#[vars.inputParams]]]></db:input-parameters>
+				</db:select>
+				<error-handler ref="database-error-handler" />
+			</try>
+		</until-successful>
+		<validation:is-null doc:id="e7aa0aa6-3e25-4a2b-9cbd-86857155445a" value="#[vars.appError]" message="#[vars.appError.errorDescription]" doc:name="IF no error THEN continue" />
+	</sub-flow>
+</mule>
