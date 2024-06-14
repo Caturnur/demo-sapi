@@ -21,7 +21,7 @@ output application/java
 				<ee:set-variable variableName="requestparams" ><![CDATA[%dw 2.0
 output application/java
 ---
-(if (!isEmpty(vars.params.ID)) "WHERE AccountID = " ++ vars.params.ID else "")]]></ee:set-variable>
+(if (!isEmpty(vars.params.ID)) " WHERE AccountID =:ID" else "")]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="select-and-count-account" doc:id="570bbd42-87aa-4d66-8cc9-47b2fd32f8a7" name="select-and-count-common-flow" />
